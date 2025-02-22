@@ -18,6 +18,14 @@ class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private val mapViewModel: MapViewModel by viewModels()
 
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ){ isGranted: Boolean ->
+        if (isGranted) {
+            mapViewModel.getDeviceLocation(fusedLocationProviderClient)
+        }
+    }
+
     private fun askPermission() = when {
         ContextCompat.checkSelfPermission(
             this,
@@ -27,14 +35,6 @@ class MainActivity : ComponentActivity() {
         }
         else -> {
             requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-    }
-
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ){ isGranted: Boolean ->
-        if (isGranted) {
-            mapViewModel.getDeviceLocation(fusedLocationProviderClient)
         }
     }
 
